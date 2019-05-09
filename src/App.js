@@ -1,26 +1,35 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {Component} from 'react';
+import FormPage from './Components/LoginForm';
+import Home from './Components/Home';
+import HorseDetail from './Components/HorseDetail';
+import Navbar from './Components/Navbar';
+import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
+import {connect} from 'react-redux';
+import Dashboard from './dashboard/Dashboard';
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  render() {
+    return (
+      <BrowserRouter>
+        <div className="App">
+          <Navbar />
+          <Switch>
+            <Route exact path="/" component={Home} />
+            <Route path="/signin" component={FormPage} />
+            <Route path="/horsedetail/:id" render={()=>(this.props.isLogin ? (<HorseDetail />) : (<Redirect to='/signin' />))}/>
+            <Route path="/dashboard" render={()=>(this.props.isLogin ? (<Dashboard />) : (<Redirect to='/signin' />))}/>
+          </Switch>
+        </div>
+      </BrowserRouter>
+    );
+  }
 }
 
-export default App;
+const mapStateToProps = (state) => {
+  return {
+    isLogin: state.loginData.isLogin
+  }
+}
+
+export default connect(mapStateToProps, null)(App);
